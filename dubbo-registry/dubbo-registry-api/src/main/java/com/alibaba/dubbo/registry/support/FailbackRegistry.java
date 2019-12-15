@@ -36,6 +36,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
+ * 重写了父类的注册、订阅、查询和通知等方法，并且添加了重试机制。
  * FailbackRegistry. (SPI, Prototype, ThreadSafe)
  *
  * @author william.liangf

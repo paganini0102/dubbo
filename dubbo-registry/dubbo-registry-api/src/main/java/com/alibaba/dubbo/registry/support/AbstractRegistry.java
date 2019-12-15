@@ -50,6 +50,8 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
+ * 实现了Registry接口中的注册、订阅、查询、通知等方法，还实现了磁盘文件持久化注册信息这一通用方法。
+ * 但是注册、订阅、查询、通知等方法只是简单的把URL加入对应的集合，没有具体的注册或订阅逻辑。
  * AbstractRegistry. (SPI, Prototype, ThreadSafe)
  *
  * @author chao.liuc
