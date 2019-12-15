@@ -65,11 +65,11 @@ public abstract class AbstractRegistry implements Registry {
     private static final String URL_SPLIT = "\\s+";
     // 日志输出
     protected final Logger logger = LoggerFactory.getLogger(getClass());
-    // 本地磁盘缓存，其中特殊的key值.registies记录注册中心列表，其它均为notified服务提供者列表
+    // 本地磁盘缓存，其中特殊的key值。registies记录注册中心列表，其它均为notified服务提供者列表
     private final Properties properties = new Properties();
     // 文件缓存定时写入
     private final ExecutorService registryCacheExecutor = Executors.newFixedThreadPool(1, new NamedThreadFactory("DubboSaveRegistryCache", true));
-    //是否是同步保存文件
+    // 是否是同步保存文件
     private final boolean syncSaveFile;
     private final AtomicLong lastCacheChanged = new AtomicLong();
     private final Set<URL> registered = new ConcurrentHashSet<URL>();
@@ -199,6 +199,7 @@ public abstract class AbstractRegistry implements Registry {
         if (file != null && file.exists()) {
             InputStream in = null;
             try {
+                // 读取磁盘上的文件
                 in = new FileInputStream(file);
                 properties.load(in);
                 if (logger.isInfoEnabled()) {
@@ -347,6 +348,10 @@ public abstract class AbstractRegistry implements Registry {
         }
     }
 
+    /**
+     * 封装了更新内存缓存和更新文件缓存的逻辑
+     * @param urls
+     */
     protected void notify(List<URL> urls) {
         if (urls == null || urls.isEmpty()) return;
 
@@ -435,8 +440,10 @@ public abstract class AbstractRegistry implements Registry {
             properties.setProperty(url.getServiceKey(), buf.toString());
             long version = lastCacheChanged.incrementAndGet();
             if (syncSaveFile) {
+                // 同步保存
                 doSaveProperties(version);
             } else {
+                // 异步保存，放入线程池。会传入一个AtomicLong的版本号，保证数据是最新的
                 registryCacheExecutor.execute(new SaveProperties(version));
             }
         } catch (Throwable t) {
