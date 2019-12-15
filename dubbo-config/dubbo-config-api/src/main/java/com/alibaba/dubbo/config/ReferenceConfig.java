@@ -341,10 +341,10 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
         URL tmpUrl = new URL("temp", "localhost", 0, map);
         final boolean isJvmRefer;
         if (isInjvm() == null) {
-            if (url != null && url.length() > 0) { //指定URL的情况下，不做本地引用
+            if (url != null && url.length() > 0) { // 指定URL的情况下，不做本地引用
                 isJvmRefer = false;
-            } else if (InjvmProtocol.getInjvmProtocol().isInjvmRefer(tmpUrl)) {
-                //默认情况下如果本地有服务暴露，则引用本地服务.
+            } else if (InjvmProtocol.getInjvmProtocol().isInjvmRefer(tmpUrl)) { // 默认检查是否是同一个JVM内部引用
+                // 默认情况下如果本地有服务暴露，则引用本地服务.
                 isJvmRefer = true;
             } else {
                 isJvmRefer = false;
@@ -355,7 +355,7 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
 
         if (isJvmRefer) {
             URL url = new URL(Constants.LOCAL_PROTOCOL, NetUtils.LOCALHOST, 0, interfaceClass.getName()).addParameters(map);
-            invoker = refprotocol.refer(interfaceClass, url);
+            invoker = refprotocol.refer(interfaceClass, url); // 直接使用injvm协议从内存中获取实例
             if (logger.isInfoEnabled()) {
                 logger.info("Using injvm service " + interfaceClass.getName());
             }
@@ -369,7 +369,7 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
                             url = url.setPath(interfaceName);
                         }
                         if (Constants.REGISTRY_PROTOCOL.equals(url.getProtocol())) {
-                            urls.add(url.addParameterAndEncoded(Constants.REFER_KEY, StringUtils.toQueryString(map)));
+                            urls.add(url.addParameterAndEncoded(Constants.REFER_KEY, StringUtils.toQueryString(map))); // 注册中心地址后添加refer存储服务消费元数据信息
                         } else {
                             urls.add(ClusterUtils.mergeUrl(url, map));
                         }
