@@ -37,6 +37,7 @@ import java.util.Map;
 public class ContextFilter implements Filter {
 
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
+        // 从invocation对象获取附加属性Map
         Map<String, String> attachments = invocation.getAttachments();
         if (attachments != null) {
             attachments = new HashMap<String, String>(attachments);
@@ -57,6 +58,7 @@ public class ContextFilter implements Filter {
 
         // modified by lishen
         // we may already added some attachments into RpcContext before this filter (e.g. in rest protocol)
+        // 不为null则设置到上下文对象中
         if (attachments != null) {
             if (RpcContext.getContext().getAttachments() != null) {
                 RpcContext.getContext().getAttachments().putAll(attachments);
@@ -71,6 +73,7 @@ public class ContextFilter implements Filter {
         try {
             return invoker.invoke(invocation);
         } finally {
+            // 清除上下文对象，则附加属性也被回收
             RpcContext.removeContext();
         }
     }
