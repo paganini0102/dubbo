@@ -34,9 +34,10 @@ import java.util.concurrent.atomic.AtomicLong;
 public class RpcStatus {
 
     private static final ConcurrentMap<String, RpcStatus> SERVICE_STATISTICS = new ConcurrentHashMap<String, RpcStatus>();
-
+    /** 缓存key为接口类，value为map */
     private static final ConcurrentMap<String, ConcurrentMap<String, RpcStatus>> METHOD_STATISTICS = new ConcurrentHashMap<String, ConcurrentMap<String, RpcStatus>>();
     private final ConcurrentMap<String, Object> values = new ConcurrentHashMap<String, Object>();
+    /** 当前激活并发数 */
     private final AtomicInteger active = new AtomicInteger();
     private final AtomicLong total = new AtomicLong();
     private final AtomicInteger failed = new AtomicInteger();
@@ -57,6 +58,7 @@ public class RpcStatus {
     }
 
     /**
+     * 获取方法对应的RpcStatus
      * @param url
      * @return status
      */
@@ -110,6 +112,7 @@ public class RpcStatus {
     }
 
     /**
+     * 递增方法对应的激活并发数
      * @param url
      */
     public static void beginCount(URL url, String methodName) {
@@ -122,6 +125,7 @@ public class RpcStatus {
     }
 
     /**
+     * 原子性的递减方法对应的激活并发数
      * @param url
      * @param elapsed
      * @param succeeded
@@ -132,6 +136,7 @@ public class RpcStatus {
     }
 
     private static void endCount(RpcStatus status, long elapsed, boolean succeeded) {
+        // 原子性递减激活并发数
         status.active.decrementAndGet();
         status.total.incrementAndGet();
         status.totalElapsed.addAndGet(elapsed);
