@@ -36,10 +36,15 @@ import java.util.concurrent.TimeUnit;
 public class CachedThreadPool implements ThreadPool {
 
     public Executor getExecutor(URL url) {
+        // 获取线程名称
         String name = url.getParameter(Constants.THREAD_NAME_KEY, Constants.DEFAULT_THREAD_NAME);
+        // 获取线程池核心线程个数
         int cores = url.getParameter(Constants.CORE_THREADS_KEY, Constants.DEFAULT_CORE_THREADS);
+        // 获取线程池核最大线程个数
         int threads = url.getParameter(Constants.THREADS_KEY, Integer.MAX_VALUE);
+        // 获取线程池队列大小
         int queues = url.getParameter(Constants.QUEUES_KEY, Constants.DEFAULT_QUEUES);
+        // 获取线程池队列线程空闲多少时间被回收
         int alive = url.getParameter(Constants.ALIVE_KEY, Constants.DEFAULT_ALIVE);
         return new ThreadPoolExecutor(cores, threads, alive, TimeUnit.MILLISECONDS,
                 queues == 0 ? new SynchronousQueue<Runnable>() :

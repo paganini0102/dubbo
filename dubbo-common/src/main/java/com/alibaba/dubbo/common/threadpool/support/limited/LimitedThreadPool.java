@@ -36,10 +36,15 @@ import java.util.concurrent.TimeUnit;
 public class LimitedThreadPool implements ThreadPool {
 
     public Executor getExecutor(URL url) {
+        // 获取线程名称
         String name = url.getParameter(Constants.THREAD_NAME_KEY, Constants.DEFAULT_THREAD_NAME);
+        // 获取线程池核心线程个数
         int cores = url.getParameter(Constants.CORE_THREADS_KEY, Constants.DEFAULT_CORE_THREADS);
+        // 获取线程池核心线程个数
         int threads = url.getParameter(Constants.THREADS_KEY, Constants.DEFAULT_THREADS);
+        // 获取线程池队列大小
         int queues = url.getParameter(Constants.QUEUES_KEY, Constants.DEFAULT_QUEUES);
+        // 使用JUC包的ThreadPoolExecutor创建线程池
         return new ThreadPoolExecutor(cores, threads, Long.MAX_VALUE, TimeUnit.MILLISECONDS,
                 queues == 0 ? new SynchronousQueue<Runnable>() :
                         (queues < 0 ? new LinkedBlockingQueue<Runnable>()
